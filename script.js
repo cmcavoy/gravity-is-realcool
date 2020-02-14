@@ -49,16 +49,13 @@ class CelestialObject {
   }
   
   draw() {
-    //fill(this.color);
-    //stroke(this.color);
-    //strokeWeight(this.velocity.mag() * this.mass);
-    //line(this.location.x, this.location.y, this.previousLocation.x, this.previousLocation.y); 
-    //if (this.stationary) {
-    //stroke(0,0,0);
+    fill(this.color);
+    stroke(this.color);
+    strokeWeight(this.velocity.mag());
+    line(this.location.x, this.location.y, this.previousLocation.x, this.previousLocation.y); 
     //ellipse(this.location.x, this.location.y, this.size, this.size);
-    translate(this.location.x, this.location.y, this.location.z);
-    sphere(this.size * 10);
-    //}
+    //translate(this.location.x, this.location.y, this.location.z);
+    //sphere(this.size * 10);
   }
 }
 
@@ -88,13 +85,13 @@ function setup() {
   }
   
   for (let i=0; i<ships; i++) {
-    //let s = new CelestialObject((width * ((i + 1) / ships)), (height / ((i + 1) / ships)), 1, 1, false);
     let x = int(random(0,width));
     let y = int(random(0,height));
     let z = int(random(0,50));
     let r = random(0,255);
     let g = random(0,255);
     let b = random(0,255);
+
     let s = new CelestialObject(x, y, z, 0.1, 10, false, [r,g,b]);
     let heading = random(0, PI * 2);
     s.addThrust(0.1, heading);
@@ -103,16 +100,16 @@ function setup() {
 }
 
 function draw() {
-  /*clear();
+  //clear();
   translate(-width/2,-height/2,0);
-  let fov = PI/3;
-  let cameraZ = (height/2.0) / tan(fov/2.0);
-  perspective(fov, width/height, cameraZ/10.0, cameraZ*10.0);
+  //let fov = PI/3;
+  //let cameraZ = (height/2.0) / tan(fov/2.0);
+  //perspective(fov, width/height, cameraZ/10.0, cameraZ*10.0);
   for (const i in universe) {
     universe[i].update(universe);
     universe[i].draw();
-  }*/
-  box();
-  translate(100,100,-100);
-  box();
+  }
+  //box();
+  //translate(100,100,-100);
+  //box();
 }
