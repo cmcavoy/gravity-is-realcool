@@ -1,3 +1,5 @@
+let everyone_has_gravity = false; // if this is true, all objects will influence each other by mass, if false only stationary objects will exert gravitational force.
+
 class CelestialObject {
   constructor(x, y, z, mass, size, stationary, color) {
     this.location = createVector(x,y, z);
@@ -38,8 +40,10 @@ class CelestialObject {
     
   update(objs) {
     for (let i=0; i<objs.length; i++) {
-      //if (objs[i] != this && objs[i].stationary && !this.stationary) {
-      if (objs[i] != this) {
+      if (!everyone_has_gravity && objs[i] != this && objs[i].stationary && !this.stationary) {
+        this.gravity(objs[i]);
+      }
+      else if (everyone_has_gravity && objs[i] != this) {
         this.gravity(objs[i]);
       }
     }
@@ -51,9 +55,14 @@ class CelestialObject {
   draw() {
     fill(this.color);
     stroke(this.color);
-    strokeWeight(this.velocity.mag());
-    line(this.location.x, this.location.y, this.previousLocation.x, this.previousLocation.y); 
-    //ellipse(this.location.x, this.location.y, this.size, this.size);
+    if (! this.stationary) {
+      strokeWeight(this.velocity.mag() * this.size * 0.5);
+      line(this.location.x, this.location.y, this.previousLocation.x, this.previousLocation.y); 
+    }
+    if (this.stationary) {
+      stroke(0);
+      //ellipse(this.location.x, this.location.y, this.size, this.size);
+    }
     //translate(this.location.x, this.location.y, this.location.z);
     //sphere(this.size * 10);
   }
@@ -61,41 +70,48 @@ class CelestialObject {
 
 p5.disableFriendlyErrors = true;
 
-let planets = 1;
-let ships = 10;
-
 let universe = [];
 
 function setup() {
   createCanvas(windowWidth - 40, windowHeight, WEBGL);
   let width = windowWidth -40;
   let height = windowHeight;
-  background(255);
+  background(0);
   stroke(0);
   fill(0);
   
-  for (let i=0; i<planets; i++) {
-    //let x = int(random(0,width));
-    //let y = int(random(0,height));
-    let x = width / 2;
-    let y = height / 2;
-    let z = 0;
-    let p = new CelestialObject(x, y, z, 50, 10, true, [255, 0 , 0]);
-    universe.push(p);
-  }
+  let cx = width / 2;
+  let cy = height / 2;
+  let cz = 0;
+  universe.push(new CelestialObject(cx, cy, cz, 50, 5, true, [250, 250 , 250]));
+  universe.push(new CelestialObject(cx, cy + 200, cz, 50, 5, true, [250, 250 , 250]));
+  universe.push(new CelestialObject(cx, cy - 200, cz, 50, 5, true, [250, 250 , 250]));
   
-  for (let i=0; i<ships; i++) {
-    let x = int(random(0,width));
-    let y = int(random(0,height));
-    let z = int(random(0,50));
-    let r = random(0,255);
-    let g = random(0,255);
-    let b = random(0,255);
+  universe.push(new CelestialObject(cx + 200, cy, cz, 50, 5, false, [250, 250 , 250]));
+  universe.push(new CelestialObject(cx + 200, cy + 200, cz, 50, 5, false, [250, 250 , 250]));
+  universe.push(new CelestialObject(cx + 200, cy - 200, cz, 50, 5, false, [250, 250 , 250]));
 
-    let s = new CelestialObject(x, y, z, 0.1, 10, false, [r,g,b]);
-    let heading = random(0, PI * 2);
-    s.addThrust(0.1, heading);
-    universe.push(s);
+  universe.push(new CelestialObject(cx - 200, cy, cz, 50, 5, false, [250, 250 , 250]));
+  universe.push(new CelestialObject(cx - 200, cy + 200, cz, 50, 5, false, [250, 250 , 250]));
+  universe.push(new CelestialObject(cx - 200, cy - 200, cz, 50, 5, false, [250, 250 , 250]));
+
+  
+  let grid_spacing = 5
+  let space_between = width / grid_spacing;
+  for (let i=0; i<=grid_spacing; i++) { // grid_spacing + 1 columns
+    let y = i * space_between;
+    let z = 0;
+    for (let j=0; j<=grid_spacing; j++) {
+      let x = j * space_between; // grid_spacing + 1 rows
+      let r = 200;
+      let g = 200;
+      let b = 200;
+      let s = new CelestialObject(x, y, z, 0.1, 0.1, false, [r,g,b]);
+      universe.push(s);
+    }
+    // let s = new CelestialObject(x, y, z, 0.1, 0.1, false, [r,g,b]);
+    // let heading = random(0, PI * 2);
+    // s.addThrust(0.1, heading);
   }
 }
 
